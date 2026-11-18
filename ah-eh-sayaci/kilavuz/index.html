@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ah-Eh Sayacı Kılavuzu</title>
+<style>
+  :root {
+    --bg: #f5f4f0; --surface: #ffffff; --surface-2: #f0eee9; --text: #1b1e25; --muted: #6a6f7b;
+    --border: #e4e1da; --accent: #0d4f7c; --accent-soft: #e2edf6; --warn-soft: #fdf3e1; --warn: #8a5a0b;
+    --shadow: 0 1px 2px rgba(20,24,32,.05), 0 4px 14px rgba(20,24,32,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1216; --surface: #171b21; --surface-2: #1f242c; --text: #e9ebef; --muted: #98a0ad;
+      --border: #2a3039; --accent: #5aa6dc; --accent-soft: #16324a; --warn-soft: #33270f; --warn: #f0c36a;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+         background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  main { max-width: 780px; margin: 0 auto; padding: 32px 16px 80px; }
+  a { color: var(--accent); }
+  .crumbs { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+  h1 { font-size: 30px; line-height: 1.2; letter-spacing: -.01em; margin: 0 0 10px; }
+  .lead { font-size: 18px; color: var(--muted); margin: 0 0 22px; }
+  .cta { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600;
+         padding: 10px 18px; border-radius: 10px; }
+  @media (prefers-color-scheme: dark) { .cta { color: #08141f; } }
+  h2 { font-size: 22px; margin: 48px 0 8px; padding-top: 8px; letter-spacing: -.01em; scroll-margin-top: 16px; }
+  h3 { font-size: 17px; margin: 28px 0 4px; }
+  p, ul, ol { margin: 0 0 14px; }
+  li { margin-bottom: 6px; }
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px; margin: 28px 0 0; }
+  .toc b { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .toc ol { margin: 6px 0 0; padding-left: 20px; }
+  .toc li { margin: 2px 0; }
+  figure { margin: 16px 0 22px; }
+  figure img { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border);
+               box-shadow: var(--shadow); background: #fff; }
+  figure.narrow img { max-width: 520px; }
+  figure.small img { max-width: 200px; }
+  figure a { display: block; cursor: zoom-in; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 8px; }
+  .tip, .warn { border-radius: 12px; padding: 12px 16px; margin: 0 0 16px; font-size: 15px; }
+  .tip { background: var(--accent-soft); }
+  .warn { background: var(--warn-soft); }
+  .tip b:first-child, .warn b:first-child { margin-right: 4px; }
+  .tip ul, .warn ul { margin: 6px 0 8px; padding-left: 20px; }
+  .warn b:first-child { color: var(--warn); }
+  kbd { font: 600 13px/1 ui-monospace, Menlo, monospace; padding: 3px 7px; border-radius: 6px; white-space: nowrap;
+        background: var(--surface-2); border: 1px solid var(--border); border-bottom-width: 2px; }
+  .btn { font-weight: 600; white-space: nowrap; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 18px; font-size: 15px;
+          background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: var(--surface-2); }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { white-space: nowrap; }
+  details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0 16px; margin-bottom: 10px; }
+  summary { cursor: pointer; font-weight: 600; padding: 12px 0; }
+  details p { margin-bottom: 14px; }
+  footer { margin-top: 56px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="crumbs"><a href="../../">Toastmasters Araçları</a> › <a href="../">Ah-Eh Sayacı</a> › Kılavuz</div>
+
+  <h1>Ah-Eh Sayacı kullanım kılavuzu</h1>
+  <p class="lead">“Ah-Eh” Sayıcı rolünü üstlendiğin toplantıda dolgu kelimelerini saymak ve sonunda raporu sunmak için adım adım rehber.</p>
+  <a class="cta" href="../">Ah-Eh Sayacı’nı aç →</a>
+
+  <nav class="toc">
+    <b>İçindekiler</b>
+    <ol>
+      <li><a href="#rol">Rol ve araç</a></li>
+      <li><a href="#once">Toplantıdan önce: listeyi hazırla</a></li>
+      <li><a href="#sirasinda">Toplantı sırasında: say</a></li>
+      <li><a href="#sonra">Değerlendirme oturumu: raporu sun</a></li>
+      <li><a href="#kisayollar">Klavye kısayolları</a></li>
+      <li><a href="#sss">Sık sorulan sorular</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="rol">1. Rol ve araç</h2>
+  <p>“Ah-Eh” Sayıcı, toplantı boyunca her konuşmacının dolgu kelimelerini (<i>ah</i>, <i>eh</i>, <i>yani</i>, <i>şey</i>, <i>hani</i> vb.) kaç kez kullandığını sayar. Değerlendirme oturumunda da bu sayıları kısaca paylaşır. Amaç kimseyi eleştirmek değil, konuşmacıların farkındalığını artırmak.</p>
+  <p>Ah-Eh Sayacı bu işi kolaylaştıran bir web sayfası:</p>
+  <ul>
+    <li>Kurulum ya da üyelik gerekmez. Sayfayı açman yeterli.</li>
+    <li>Kulübün ajanda dosyasını (.docx) okuyup konuşmacı listesini kendisi çıkarır.</li>
+    <li>Toplantı sırasında tek tuşla sayarsın. Gözün ekranda değil konuşmacıda kalır.</li>
+    <li>Sonunda en az dolgu kelimesi kullanandan en çok kullanana sıralı bir rapor hazırlar.</li>
+  </ul>
+  <div class="tip"><b>Bilgisayar önerilir.</b> Araç telefonda da açılır, ama klavye kısayolları ve mini pencere en çok bilgisayarda işe yarar.</div>
+
+  <h2 id="once">2. Toplantıdan önce: listeyi hazırla</h2>
+  <p>Toplantı başlamadan 5 dakika ayırman yeterli.</p>
+
+  <h3>Önceki toplantıyı temizle</h3>
+  <p>Araç, kaldığın yeri tarayıcında hatırlar. Bir önceki toplantıdan kalan isimler varsa sağ üstteki <span class="btn">Yeni toplantı</span>’ya tıkla. Yanlışlıkla silmeyi önlemek için düğme kırmızıya döner. Üç saniye içinde bir kez daha tıkladığında her şey silinir.</p>
+
+  <h3>Ajandayı yükle</h3>
+  <ol>
+    <li><span class="btn">⇪ Ajandadan ekle</span>’ye tıkla ve kulübün gönderdiği ajanda dosyasını (.docx) seç. Dosyayı sayfanın üzerine sürükleyip bırakman da yeterli.</li>
+    <li>Araç ajandadaki görevlileri, hazırlıklı konuşmacıları ve değerlendiricileri bulup bir önizleme gösterir. “Ah-Eh” Sayıcı sen olduğun için senin adın listeye eklenmez. Toplantı tarihi ve numarası da ajandadan gelir.</li>
+    <li>Listeyi kontrol et. Yanlış yazılmış bir ismi kutuda düzeltebilir, bölümünü değiştirebilir, gereksiz bir satırı <b>✕</b> ile çıkarabilirsin.</li>
+    <li><span class="btn">Listeye ekle</span>’ye tıkla.</li>
+  </ol>
+  <figure>
+    <a href="img/01-ajanda.png" target="_blank" rel="noopener" title="Tam boyutta aç"><img src="img/01-ajanda.png" alt="Ajandadan ekle penceresi: ajanda metni okunmuş, 8 kişi bölümleriyle birlikte listelenmiş." loading="lazy"></a>
+    <figcaption>Ajanda okunduktan sonraki önizleme. İsimleri ve bölümleri eklemeden önce düzeltebilirsin.</figcaption>
+  </figure>
+  <div class="tip"><b>Ajanda .docx değilse</b> (örneğin PDF ya da WhatsApp mesajı): metnini kopyalayıp aynı penceredeki kutuya yapıştır ve <span class="btn">Oku</span>’ya tıkla. Yalnızca isim listen varsa her satıra bir isim yaz, “Düz isim listesi hangi bölüme eklensin” kısmından bölümü seç ve <span class="btn">Oku</span>’ya tıkla.</div>
+
+  <h3>Eksikleri elle ekle</h3>
+  <p>Misafirler ve son anda değişen görevliler genellikle ajandada olmaz. Bunları <b>Konuşmacı ekle</b> bölümünden eklersin. Adı yaz, sağdaki listeden bölümü seç (örneğin <i>Misafirler</i>) ve <kbd>Enter</kbd>’a bas.</p>
+  <p>Doğaçlama konuşmacılar ajandada yer almaz, çünkü toplantı sırasında seçilirler. Onları da toplantı sırasında eklersin (bkz. <a href="#dogaclama">Doğaçlama konuşmacılar</a>).</p>
+
+  <h3>Mini pencereyi hazırla (isteğe bağlı)</h3>
+  <p>Toplantı tam ekrandayken sayaca geçmek zor olabilir. <span class="btn">⧉ Mini pencere</span>, Zoom ya da Meet penceresinin üstünde duran küçük bir sayaç açar. İçinde konuşmacı seçimi, büyük <b>+1</b> düğmesi, <b>Geri al</b> ve hızlı isim ekleme var. Klavye kısayolları mini pencerede de çalışır.</p>
+  <div class="warn"><b>Not:</b> Mini pencere Chrome ve Edge’de çalışır. Safari’de açılmaz, diğer tarayıcılarda açılmazsa araç bir uyarı gösterir. Bu durumda tarayıcı penceresini toplantı penceresinin yanına yerleştirmek de iş görür.</div>
+
+  <h2 id="sirasinda">3. Toplantı sırasında: say</h2>
+  <p>Temel döngü çok basit: <b>konuşanı seç → her dolgu kelimesinde <kbd>Boşluk</kbd>’a bas</b>.</p>
+  <figure>
+    <a href="img/03-toplanti.png" target="_blank" rel="noopener" title="Tam boyutta aç"><img src="img/03-toplanti.png" alt="Toplantı sırasında aracın görünümü: üstte Şu an konuşan kutusu ve büyük +1 düğmesi, altta bölümlere ayrılmış konuşmacı kartları." loading="lazy"></a>
+    <figcaption>Toplantı sırasındaki görünüm. “Şu an konuşan” alanı sayfayı kaydırsan da ekranın üstünde kalır. Seçili kişinin kartı mavi olur ve üzerinde <b>Konuşuyor</b> yazar.</figcaption>
+  </figure>
+
+  <h3>Konuşanı seç</h3>
+  <p>Konuşmacı kürsüye çıkınca onu “Şu an konuşan” olarak seç. Üç yolu var:</p>
+  <ul>
+    <li><b>Arayarak:</b> <kbd>F</kbd>’ye bas ya da “Şu an konuşan” kutusuna tıkla, isminin birkaç harfini yaz, <kbd>↓</kbd> <kbd>↑</kbd> ile seç, <kbd>Enter</kbd>’a bas. Türkçe karakter yazmana gerek yok: <i>omer</i> yazınca <i>Ömer</i> de bulunur.</li>
+    <li><b>Ok tuşlarıyla:</b> <kbd>←</kbd> <kbd>→</kbd> önceki/sonraki kişiye, <kbd>↑</kbd> <kbd>↓</kbd> üstteki/alttaki karta geçer. Hazırlıklı konuşmacılar ve değerlendiriciler kendi bölümlerinde ajanda sırasıyla durduğu için o bölümlerde <kbd>→</kbd> genellikle bir sonraki konuşmacıyı getirir.</li>
+    <li><b>Kartla:</b> kişinin kartındaki <span class="btn">▶ Seç</span>’e tıkla.</li>
+  </ul>
+  <figure class="narrow">
+    <a href="img/04-arama.png" target="_blank" rel="noopener" title="Tam boyutta aç"><img src="img/04-arama.png" alt="Şu an konuşan kutusuna 'ay' yazılmış, altında eşleşen dört isim listelenmiş." loading="lazy"></a>
+    <figcaption>İsim arama. Listede her kişinin bölümü ve o anki sayısı da görünür.</figcaption>
+  </figure>
+
+  <h3>Say</h3>
+  <p>Seçili kişi her dolgu kelimesi kullandığında <kbd>Boşluk</kbd>’a bas. <kbd>+</kbd> ve <kbd>Enter</kbd> da aynı işi yapar. Fareyle saymak istersen büyük <b>+1</b> düğmesine tıkla. Düğmenin altında kimin sayıldığı ve o anki toplamı görünür.</p>
+  <div class="warn"><b>Dikkat:</b> Bir kartın boş bir yerine tıklamak o kişiye <b>+1 ekler</b> ve onu seçili kişi yapar. Yalnızca seçmek istiyorsan <span class="btn">▶ Seç</span>’i kullan.</div>
+  <figure class="small">
+    <a href="img/05-kart.png" target="_blank" rel="noopener" title="Tam boyutta aç"><img src="img/05-kart.png" alt="Seçili konuşmacının kartı: Konuşuyor etiketi, isim, sayı 4 ve altında Seç, eksi 1 ve kaldır düğmeleri." loading="lazy"></a>
+    <figcaption>Kart düğmeleri: <b>▶ Seç</b>, <b>−1</b>, <b>✕</b> (kaldır).</figcaption>
+  </figure>
+
+  <h3>Yanlış saydıysan</h3>
+  <ul>
+    <li><kbd>Z</kbd> ya da <span class="btn">↶ Geri al</span>: son yaptığın sayımı geri alır, kim için yaptıysan. Arka arkaya basarak daha geriye gidebilirsin.</li>
+    <li><kbd>−</kbd>: seçili kişinin sayısını bir azaltır. Başka birini düzeltmek için o kişinin kartındaki <b>−1</b>’e tıkla.</li>
+    <li>Kartta <b>✕</b> kişiyi listeden kaldırır. Sayısı 0’dan büyükse onay için bir kez daha tıklaman gerekir.</li>
+  </ul>
+
+  <h3 id="dogaclama">Doğaçlama konuşmacılar</h3>
+  <p>Doğaçlama Ustası birini seçtiğinde <b>Konuşmacı ekle</b> bölümünde bölüm olarak <i>Doğaçlama Konuşmacılar</i>’ı seç. Listede zaten olan herkes altta düğme olarak çıkar. İsmine tıklaman yeterli. Listede olmayan biriyse adını yazıp <kbd>Enter</kbd>’a bas.</p>
+  <figure>
+    <a href="img/02-dogaclama.png" target="_blank" rel="noopener" title="Tam boyutta aç"><img src="img/02-dogaclama.png" alt="Konuşmacı ekle bölümü: bölüm olarak Doğaçlama Konuşmacılar seçili, altında listedeki kişilerin isim düğmeleri var." loading="lazy"></a>
+    <figcaption>Doğaçlama için hızlı seçim. Eklediğin kişi otomatik olarak “Şu an konuşan” olur, hemen saymaya başlayabilirsin.</figcaption>
+  </figure>
+  <p>Aynı kişi hem görevli hem doğaçlama konuşmacı olabilir. Araç bunları ayrı kart olarak tutar, raporda tek satırda toplar.</p>
+
+  <div class="warn" id="kisayol-calismiyor"><b>Kısayollar çalışmıyorsa</b> iki olası neden var:
+    <ul>
+      <li><b>Ah-Eh Sayacı aktif pencere değil.</b> Tuşlar yalnızca o an aktif olan pencereye gider. Toplantı sırasında Zoom’a ya da başka bir pencereye tıkladıysan tuşlar oraya gidiyordur. Ah-Eh Sayacı sayfasında (ya da mini pencerede) boş bir yere bir kez tıkla, sonra yeniden dene.</li>
+      <li><b>İmleç bir yazı kutusunun içinde.</b> Yazı yazarken <kbd>Boşluk</kbd> sayım yapmaz. <kbd>Esc</kbd>’ye bas ya da sayfada boş bir yere tıkla.</li>
+    </ul>
+    Zoom aktifken mikrofonun kapalıysa <kbd>Boşluk</kbd>’a basılı tutmak mikrofonunu geçici olarak açabilir. Saymaya başlamadan önce aktif pencerenin Ah-Eh Sayacı olduğundan emin ol.</div>
+
+  <h2 id="sonra">4. Değerlendirme oturumu: raporu sun</h2>
+  <p>Genel Değerlendirici sana söz verdiğinde sağ üstteki <span class="btn">📄 Rapor</span>’a tıkla.</p>
+  <figure class="narrow">
+    <a href="img/06-rapor.png" target="_blank" rel="noopener" title="Tam boyutta aç"><img src="img/06-rapor.png" alt="Rapor penceresi: toplam, konuşmacı sayısı, kişi başı ortalama, hiç kullanmayan sayısı; altında sıralı konuşmacı tablosu ve hiç dolgu kelimesi kullanmayanlar kutusu." loading="lazy"></a>
+    <figcaption>Rapor, en az dolgu kelimesi kullanandan en çok kullanana sıralıdır. Hiç kullanmayanlar ayrıca öne çıkarılır.</figcaption>
+  </figure>
+  <p>Raporda şunlar var:</p>
+  <ul>
+    <li>Toplam dolgu kelimesi, konuşmacı sayısı, kişi başı ortalama ve hiç dolgu kelimesi kullanmayanların sayısı.</li>
+    <li>Her kişi için konuştuğu bölüm(ler) ve sayısı. Aynı sayıya sahip kişiler aynı sırayı paylaşır.</li>
+    <li>Hiç dolgu kelimesi kullanmayanlar için ayrı bir tebrik kutusu.</li>
+  </ul>
+  <p>Raporu paylaşmanın iki yolu var:</p>
+  <ul>
+    <li><span class="btn">⧉ Metni kopyala</span>: raporu düz metin olarak kopyalar. Toplantının sohbetine ya da kulübün WhatsApp grubuna yapıştırabilirsin.</li>
+    <li><span class="btn">⤓ PDF olarak kaydet</span>: tarayıcının yazdırma penceresini açar. Hedef olarak “PDF olarak kaydet”i seç. Dosya adı tarihle birlikte önerilir.</li>
+  </ul>
+  <div class="tip"><b>Sunum önerisi:</b> Tabloyu baştan sona okumak yerine önce genel tabloyu ver (toplam ve ortalama), sonra hiç dolgu kelimesi kullanmayanları tebrik et. Kişileri en az kullanandan başlayarak saymak olumlu bir hava yaratır.</div>
+
+  <h3>Sonraki toplantı için</h3>
+  <ul>
+    <li><span class="btn">Sayıları sıfırla</span>: kişiler kalır, bütün sayılar 0 olur. Aynı listeyle yeniden başlamak için.</li>
+    <li><span class="btn">Yeni toplantı</span>: kişiler, sayılar, tarih ve toplantı adı silinir.</li>
+  </ul>
+  <p>İkisi de yanlışlıkla tıklamaya karşı ikinci bir tıklama ister.</p>
+
+  <h2 id="kisayollar">5. Klavye kısayolları</h2>
+  <p>Kısayollar ana sayfada ve mini pencerede, hangisi aktifse orada çalışır. Bir yazı kutusunun içindeyken devre dışıdır. Çalışmıyorsa <a href="#kisayol-calismiyor">şu nota</a> bak.</p>
+  <table>
+    <tr><th>Tuş</th><th>Ne yapar</th></tr>
+    <tr><td><kbd>Boşluk</kbd> <kbd>+</kbd> <kbd>Enter</kbd></td><td>Seçili kişiye +1</td></tr>
+    <tr><td><kbd>−</kbd></td><td>Seçili kişiden −1</td></tr>
+    <tr><td><kbd>Z</kbd> <kbd>⌫</kbd></td><td>Son sayımı geri al</td></tr>
+    <tr><td><kbd>→</kbd> <kbd>←</kbd></td><td>Sonraki / önceki kişiyi seç</td></tr>
+    <tr><td><kbd>↓</kbd> <kbd>↑</kbd></td><td>Alttaki / üstteki kartı seç (mini pencerede sonraki / önceki kişi)</td></tr>
+    <tr><td><kbd>F</kbd> <kbd>/</kbd></td><td>İsim aramaya geç</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Aramadan çık</td></tr>
+  </table>
+
+  <h2 id="sss">6. Sık sorulan sorular</h2>
+  <details>
+    <summary>Sayfayı yanlışlıkla kapatırsam sayılar kaybolur mu?</summary>
+    <p>Hayır. Her değişiklik anında tarayıcına kaydedilir. Sayfayı yeniden açtığında kaldığın yerden devam edersin.</p>
+  </details>
+  <details>
+    <summary>Veriler nerede saklanıyor? Başkası görebilir mi?</summary>
+    <p>Yalnızca kendi tarayıcında. Hiçbir sunucuya gönderilmez, başka biri göremez. Bu yüzden listeyi bir bilgisayarda hazırlayıp başka bir bilgisayarda ya da başka bir tarayıcıda açarsan orada boş görünür. Gizli (private) pencerede çalışırsan pencereyi kapattığında her şey silinir.</p>
+  </details>
+  <details>
+    <summary>İnternet bağlantım kesilirse ne olur?</summary>
+    <p>Sayfa açıldıktan sonra araç internete ihtiyaç duymaz. Bağlantın gitse de saymaya ve rapor almaya devam edebilirsin.</p>
+  </details>
+  <details>
+    <summary>Ajandadan bazı isimler gelmedi ya da yanlış bölüme düştü.</summary>
+    <p>Ajanda okuyucusu kulübün standart ajanda şablonuna göre çalışır. Şablon farklıysa bazı isimler eksik kalabilir. Önizlemede bölümleri düzeltebilir, eksikleri sonradan <b>Konuşmacı ekle</b> ile ekleyebilirsin.</p>
+  </details>
+  <details>
+    <summary>Mini pencere açılmıyor.</summary>
+    <p>Mini pencere yalnızca Chrome ve Edge’de çalışır. Bu tarayıcılardan birini kullanmıyorsan aracı tarayıcı penceresinde, toplantı penceresinin yanında kullan.</p>
+  </details>
+  <details>
+    <summary>Hangi kelimeleri dolgu kelimesi saymalıyım?</summary>
+    <p>Anlama katkısı olmayan, düşünürken boşluğu doldurmak için söylenen ses ve kelimeler: <i>ıı</i>, <i>ee</i>, <i>şey</i>, <i>yani</i>, <i>hani</i>, <i>işte</i>, <i>aslında</i>, <i>falan</i>. Bir kelime anlamlı kullanıldıysa (örneğin “yani” bir açıklamaya geçiş için) sayma. Gereksiz tekrarlanan kelimeleri ve yarım bırakılıp yeniden başlanan cümleleri de saymak isteyebilirsin. Toplantının başında rolünü tanıtırken neleri sayacağını söylemen iyi olur.</p>
+  </details>
+
+  <footer><a href="../">Ah-Eh Sayacı’nı aç</a> · <a href="../../">Diğer araçlar</a></footer>
+</main>
+</body>
+</html>

@@ -42,6 +42,9 @@
   button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
   button.primary:hover { background: var(--accent-hi); border-color: var(--accent-hi); }
   button.ghost { background: transparent; }
+  a.help-link { font-size: 14px; font-weight: 500; padding: 9px 12px; border-radius: 10px; color: var(--muted);
+                 text-decoration: none; white-space: nowrap; }
+  a.help-link:hover { color: var(--accent); background: var(--surface); }
   button.ghost:hover { background: var(--surface); }
   button.danger { color: var(--danger); background: transparent; border-color: transparent; font-size: 13px; padding: 7px 10px; }
   button.danger:hover { background: var(--danger-soft); border-color: transparent; }
@@ -264,6 +267,7 @@
     </div>
     <div class="top-actions">
       <span class="pill" id="total"></span>
+      <a class="help-link" href="kilavuz/" target="_blank" rel="noopener" title="Kullanım kılavuzu yeni sekmede açılır">? Kılavuz</a>
       <button class="ghost" id="pipBtn" title="Toplantı penceresinin üstünde duran küçük sayaç">⧉ Mini pencere</button>
       <button class="ghost" id="importBtn">⇪ Ajandadan ekle</button>
       <button class="primary" id="reportBtn">📄 Rapor</button>
@@ -873,11 +877,13 @@ $("pdfBtn").addEventListener("click", () => {
 // ---- agenda-parser start ----
 // Reads the club's agenda (.docx or pasted text) and returns speakers by session.
 const TR_MONTHS = ["ocak", "şubat", "mart", "nisan", "mayıs", "haziran", "temmuz", "ağustos", "eylül", "ekim", "kasım", "aralık"];
-// Role holders who speak during the meeting. "SAYICI" covers both the vote counter and the Ah-Eh counter.
+// Role holders who speak during the meeting. "SAYICI" covers the vote counter; the Ah-Eh counter is the
+// person using this tool, so their role line is skipped (IS_AH_EH_ROLE) and they get no card.
 const ROLE_WORDS = ["BAŞKAN", "TOPLANTI USTASI", "DOĞAÇLAMA USTASI", "KELİME USTASI", "SAYICI", "ZAMAN TUTUCU",
                     "DİNLEYİCİ", "GENEL DEĞERLENDİRİCİ", "DİLBİLGİSİ", "GRAMER"];
 
 const upTr = (s) => s.toLocaleUpperCase("tr");
+const IS_AH_EH_ROLE = (label) => /\bAH\b.*\bEH\b|DOLGU/.test(upTr(label));
 const cleanName = (s) => s.replace(/^[\s•▪◦●❖\-–—*\d.)]+/, "").replace(/[\s.…:]+$/, "").replace(/\s+/g, " ").trim();
 const looksLikeName = (s) => s.length >= 3 && s.length <= 40 && s.split(" ").length <= 5 && !/\d/.test(s);
 
@@ -911,6 +917,7 @@ function parseAgendaText(text) {
 
     // "Toplantı Ustası: ........ Betül Görünmez"
     const roleMatch = line.match(/^([^:]{2,40}?)\s*:\s*[.…\s]*(.+)$/);
+    if (roleMatch && IS_AH_EH_ROLE(roleMatch[1])) continue;
     if (roleMatch && ROLE_WORDS.some(w => upTr(roleMatch[1]).includes(w))) { add(roleMatch[2], "role"); continue; }
     // "Hamza Küçük- Patika: İlgi Çekici Mizah / ..."
     if (section === "prepared" && U.includes("PATİKA")) { add(line.split(/\s*[-–—]\s*|\s+patika/i)[0], "prepared"); continue; }
