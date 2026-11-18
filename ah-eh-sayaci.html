@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ah-Eh Sayacı</title>
+<style id="appStyle">
+  :root {
+    --bg: #f5f4f0; --surface: #ffffff; --surface-2: #f0eee9; --text: #1b1e25; --muted: #6a6f7b;
+    --border: #e4e1da; --accent: #0d4f7c; --accent-hi: #1769a3; --accent-soft: #e2edf6; --on-accent: #ffffff;
+    --danger: #b42318; --danger-soft: #fdecea; --good: #15803d; --good-soft: #e7f6ec;
+    --shadow: 0 1px 2px rgba(20,24,32,.05), 0 4px 14px rgba(20,24,32,.06);
+    --shadow-lg: 0 10px 30px rgba(20,24,32,.14);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1216; --surface: #171b21; --surface-2: #1f242c; --text: #e9ebef; --muted: #98a0ad;
+      --border: #2a3039; --accent: #5aa6dc; --accent-hi: #7bbbe6; --accent-soft: #16324a; --on-accent: #08141f;
+      --danger: #f97066; --danger-soft: #3a1714; --good: #4ade80; --good-soft: #12301d;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,.5);
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+         background: var(--bg); color: var(--text); font-size: 15px; -webkit-font-smoothing: antialiased; }
+  .shell { max-width: 1180px; margin: 0 auto; padding: 16px 16px 48px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ---------- controls ---------- */
+  input, select, textarea { font: inherit; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px;
+                            background: var(--surface); color: var(--text); min-width: 0; outline: none;
+                            transition: border-color .15s, box-shadow .15s; }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  button { font: inherit; font-size: 14px; font-weight: 500; padding: 9px 14px; border-radius: 10px; cursor: pointer;
+           border: 1px solid var(--border); background: var(--surface); color: var(--text);
+           transition: background .15s, border-color .15s, transform .05s; white-space: nowrap; }
+  button:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  button.primary:hover { background: var(--accent-hi); border-color: var(--accent-hi); }
+  button.ghost { background: transparent; }
+  button.ghost:hover { background: var(--surface); }
+  button.danger { color: var(--danger); background: transparent; border-color: transparent; font-size: 13px; padding: 7px 10px; }
+  button.danger:hover { background: var(--danger-soft); border-color: transparent; }
+  button.armed { background: var(--danger) !important; color: #fff !important; border-color: var(--danger) !important; }
+  button:disabled { opacity: .4; cursor: default; transform: none; }
+
+  /* ---------- top bar ---------- */
+  .top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 12px; flex: 1 1 320px; min-width: 0; }
+  .logo { width: 46px; height: 46px; border-radius: 13px; flex: none; display: grid; place-items: center;
+          background: linear-gradient(140deg, var(--accent), #8a2a3b); color: #fff; font-weight: 800;
+          font-size: 15px; letter-spacing: -.02em; box-shadow: var(--shadow); }
+  .brand-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+  .brand h1 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+  .meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .meta input { border-color: transparent; background: transparent; padding: 3px 8px; font-size: 13px; color: var(--muted); }
+  .meta input:hover { border-color: var(--border); }
+  .meta input:focus { background: var(--surface); color: var(--text); }
+  #meetingTitle { flex: 1 1 220px; }
+  .top-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pill { font-size: 13px; color: var(--muted); background: var(--surface); border: 1px solid var(--border);
+          padding: 6px 12px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+  .pill b { color: var(--text); }
+  .sep { width: 1px; height: 22px; background: var(--border); margin: 0 2px; }
+
+  /* ---------- role info ---------- */
+  .info { background: var(--accent-soft); border-radius: 12px; padding: 0 14px;
+          border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); }
+  .info summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px;
+                  padding: 10px 0; font-size: 14px; font-weight: 600; color: var(--accent); }
+  .info summary::-webkit-details-marker { display: none; }
+  .info summary::after { content: "▾"; margin-left: auto; transition: transform .15s; }
+  .info[open] summary::after { transform: rotate(180deg); }
+  .info-ico { width: 20px; height: 20px; border-radius: 50%; flex: none; display: grid; place-items: center;
+              background: var(--accent); color: var(--on-accent); font: 700 12px/1 Georgia, serif; font-style: italic; }
+  .info p { margin: 0 0 12px 30px; line-height: 1.6; color: var(--text); }
+  .info q { font-weight: 600; }
+
+  /* ---------- panels ---------- */
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+           box-shadow: var(--shadow); padding: 14px; }
+  .panel-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .add-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  #newName { flex: 1 1 220px; }
+  .quick { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .quick-label { font-size: 13px; color: var(--muted); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chips button { padding: 5px 12px; font-size: 13px; border-radius: 999px; background: var(--surface-2); border-color: transparent; }
+  .chips button:hover { background: var(--accent-soft); color: var(--accent); }
+
+  /* ---------- now speaking (sticky) ---------- */
+  .now { position: sticky; top: 8px; z-index: 5; display: grid; gap: 12px; align-items: stretch;
+         grid-template-columns: minmax(200px, 1fr) minmax(220px, 1.4fr) auto;
+         background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(10px);
+         border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-lg); padding: 14px; }
+  @media (max-width: 720px) { .now { grid-template-columns: 1fr; } }
+  .who { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+  .who label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+               display: flex; align-items: center; gap: 6px; }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #e5484d; box-shadow: 0 0 0 0 rgba(229,72,77,.6);
+              animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(229,72,77,.55); } 70% { box-shadow: 0 0 0 8px rgba(229,72,77,0); } 100% { box-shadow: 0 0 0 0 rgba(229,72,77,0); } }
+  .who .combo input { font-size: 17px; font-weight: 600; padding: 11px 14px; }
+  .big { min-height: 76px; border-radius: 14px; border: none; color: var(--on-accent);
+         background: linear-gradient(160deg, var(--accent-hi), var(--accent));
+         display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+         box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .big:hover { filter: brightness(1.06); }
+  .big:active { transform: scale(.985); }
+  .big .plus { font-size: 34px; font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+  .big .cnt { font-size: 14px; font-weight: 500; opacity: .9; max-width: 100%; overflow: hidden;
+              text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .big .cnt b { font-weight: 700; }
+  .side { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+  .side button { width: 100%; }
+  .keys { grid-column: 1 / -1; display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted);
+          border-top: 1px dashed var(--border); padding-top: 10px; }
+  .keys span { display: inline-flex; align-items: center; gap: 4px; }
+  kbd { font: 600 11px/1 ui-monospace, Menlo, monospace; padding: 4px 6px; border-radius: 6px; min-width: 20px; text-align: center;
+        background: var(--surface-2); border: 1px solid var(--border); border-bottom-width: 2px; color: var(--text); }
+
+  /* Searchable speaker picker */
+  .combo { position: relative; }
+  .combo input { width: 100%; }
+  .combo-list { position: absolute; left: 0; right: 0; top: 100%; margin: 6px 0 0; padding: 6px; list-style: none;
+                max-height: 50vh; overflow: auto; z-index: 20; background: var(--surface);
+                border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-lg); }
+  .combo-list li { display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+                   padding: 9px 10px; border-radius: 8px; cursor: pointer; }
+  .combo-list li:hover { background: var(--surface-2); }
+  .combo-list li.active { background: var(--accent-soft); }
+  .combo-list li .meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .combo-list li.none { color: var(--muted); cursor: default; }
+
+  /* ---------- board ---------- */
+  main { display: flex; flex-direction: column; gap: 18px; }
+  .group-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text);
+                 margin: 0 0 10px 2px; }
+  .group-title::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--cat); }
+  .group-title .n { font-weight: 500; color: var(--muted); }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); }
+  .card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+          box-shadow: var(--shadow); padding: 14px 12px 10px; cursor: pointer; user-select: none; overflow: hidden;
+          transition: transform .08s, box-shadow .15s, border-color .15s; }
+  .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--cat); opacity: .85; }
+  .card:hover { box-shadow: var(--shadow-lg); }
+  .card:active { transform: scale(.97); }
+  .card .card-top { display: flex; flex-direction: column; gap: 6px; min-height: 38px; }
+  .card .name { font-weight: 650; font-size: 15px; line-height: 1.25; }
+  .card .badge { display: none; align-self: flex-start; order: -1; font-size: 10px; font-weight: 800;
+                 text-transform: uppercase; letter-spacing: .06em; align-items: center; gap: 5px; white-space: nowrap;
+                 padding: 3px 8px 3px 6px; border-radius: 999px; background: #fff; color: #d92d33; }
+  .card.current .badge { display: inline-flex; }
+  .card .count { font-size: 46px; font-weight: 800; line-height: 1; margin: 8px 0 10px; letter-spacing: -.03em;
+                 font-variant-numeric: tabular-nums; }
+  .card .count.zero { color: var(--muted); opacity: .55; }
+  .card .actions { display: flex; gap: 4px; opacity: .55; transition: opacity .15s; }
+  .card:hover .actions, .card.current .actions { opacity: 1; }
+  .card .actions button { flex: 1; padding: 5px 0; font-size: 12px; border-radius: 8px; background: var(--surface-2); border-color: transparent; }
+  .card .actions button:hover { background: var(--accent-soft); color: var(--accent); }
+  .card .actions button[data-act="remove"]:hover { background: var(--danger-soft); color: var(--danger); }
+  .card.current { background: linear-gradient(160deg, var(--accent-hi), var(--accent)); border-color: var(--accent);
+                  color: var(--on-accent); transform: translateY(-3px);
+                  box-shadow: 0 0 0 3px var(--accent-soft), 0 12px 28px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .card.current:active { transform: translateY(-3px) scale(.97); }
+  .card.current::before { background: #fff; opacity: .5; }
+  .card.current .count, .card.current .count.zero { color: var(--on-accent); opacity: 1; }
+  .card.current .actions { opacity: 1; }
+  .card.current .actions button { background: rgba(255,255,255,.18); color: var(--on-accent); }
+  .card.current .actions button:hover { background: rgba(255,255,255,.3); color: var(--on-accent); }
+  .empty { text-align: center; padding: 56px 20px; border: 2px dashed var(--border); border-radius: 18px; color: var(--muted); line-height: 1.7; }
+  .empty .big-ico { font-size: 40px; margin-bottom: 6px; }
+  .empty b { color: var(--text); }
+
+  /* ---------- toast ---------- */
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 30;
+           background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 14px;
+           box-shadow: var(--shadow-lg); max-width: calc(100vw - 32px); }
+  .toast:empty { display: none; }
+
+  /* ---------- dialogs ---------- */
+  dialog { border: 1px solid var(--border); border-radius: 18px; background: var(--surface); color: var(--text);
+           width: min(720px, calc(100vw - 32px)); padding: 24px; box-shadow: var(--shadow-lg); }
+  dialog::backdrop { background: rgba(10,14,20,.5); backdrop-filter: blur(3px); }
+  dialog h2 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.01em; }
+  .rep-head .sub, .help { color: var(--muted); font-size: 14px; line-height: 1.55; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 18px 0; }
+  .stat { background: var(--surface-2); border-radius: 12px; padding: 12px 14px; }
+  .stat .v { font-size: 28px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 14px; font-size: 15px; }
+  th, td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+  th { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  td.muted { color: var(--muted); font-size: 13px; }
+  .rank { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+          background: var(--surface-2); font-size: 13px; font-weight: 700; }
+  tr.clean td { background: var(--good-soft); }
+  tr.clean .rank { background: var(--good); color: #fff; }
+  tr.sum td { font-weight: 800; border-top: 2px solid var(--text); border-bottom: none; }
+  .note { margin: 8px 0; line-height: 1.5; }
+  .note.good { color: var(--good); font-weight: 500; }
+  .row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 18px; }
+  .clean-box { background: var(--good-soft); border: 1px solid color-mix(in srgb, var(--good) 30%, transparent);
+               border-radius: 14px; padding: 14px 16px; break-inside: avoid; }
+  .clean-title { font-size: 14px; font-weight: 700; color: var(--good); display: flex; align-items: center; gap: 8px; }
+  .clean-title span { font-size: 12px; font-weight: 600; background: var(--good); color: #fff;
+                      padding: 2px 8px; border-radius: 999px; }
+  .clean-names { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .clean-names span { background: var(--surface); color: var(--text); border: 1px solid var(--border);
+                      padding: 5px 11px; border-radius: 999px; font-size: 14px; font-weight: 500; }
+
+  /* Import dialog */
+  .file-drop { margin-top: 14px; display: flex; align-items: center; gap: 12px; padding: 14px; border: 2px dashed var(--border);
+               border-radius: 12px; background: var(--surface-2); }
+  #importText { width: 100%; min-height: 110px; margin-top: 10px; resize: vertical; }
+  .preview td { padding: 4px 6px; }
+  .preview input, .preview select { width: 100%; padding: 6px 9px; font-size: 14px; }
+  .drop-overlay { position: fixed; inset: 12px; z-index: 40; border-radius: 22px;
+                  background: color-mix(in srgb, var(--accent) 14%, transparent); backdrop-filter: blur(4px);
+                  border: 3px dashed var(--accent); display: grid; place-items: center;
+                  font-size: 24px; font-weight: 800; color: var(--accent); pointer-events: none; }
+
+  /* ---------- floating mini window (Document Picture-in-Picture) ---------- */
+  .pip { padding: 10px; display: flex; flex-direction: column; gap: 8px; height: 100vh; }
+  .pip .combo input { width: 100%; font-size: 15px; font-weight: 600; }
+  .pip .big { flex: 1 1 auto; min-height: 90px; }
+  .pip .big .plus { font-size: 40px; }
+  .pip .line { display: flex; gap: 6px; }
+  .pip .line > * { flex: 1 1 0; }
+  .pip .line input { flex: 2 1 0; }
+  .pip-status { font-size: 12px; color: var(--muted); min-height: 16px; }
+  .pip .keyhint { font-size: 11px; color: var(--muted); }
+
+  #printArea { display: none; }
+  @media print {
+    :root { --bg: #fff; --surface: #fff; --surface-2: #f3f3f3; --text: #000; --muted: #555; --border: #ccc;
+            --good: #15803d; --good-soft: #eef8f1; }
+    body > *:not(#printArea) { display: none !important; }
+    #printArea { display: block; padding: 0 8mm; }
+    body { background: #fff; }
+    .stat, tr { break-inside: avoid; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @page { margin: 15mm; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">Ah·Eh</div>
+      <div class="brand-text">
+        <h1>Ah-Eh Sayacı</h1>
+        <div class="meta">
+          <input type="date" id="meetingDate" title="Toplantı tarihi">
+          <input type="text" id="meetingTitle" placeholder="Toplantı adı ekle (isteğe bağlı)">
+        </div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="pill" id="total"></span>
+      <button class="ghost" id="pipBtn" title="Toplantı penceresinin üstünde duran küçük sayaç">⧉ Mini pencere</button>
+      <button class="ghost" id="importBtn">⇪ Ajandadan ekle</button>
+      <button class="primary" id="reportBtn">📄 Rapor</button>
+      <span class="sep"></span>
+      <button class="danger" id="resetCountsBtn" title="Kişiler kalır, bütün sayılar 0 olur">Sayıları sıfırla</button>
+      <button class="danger" id="resetBtn" title="Kişiler, sayılar, tarih ve toplantı adı silinir">Yeni toplantı</button>
+    </div>
+  </header>
+
+  <details class="info">
+    <summary><span class="info-ico">i</span>“Ah-Eh” Sayıcı (Dolgu Sözcük Sayıcı) rolü nedir?</summary>
+    <p>Her bir kişinin konuşması sırasında kaç defa dolgu kelimelerini (<q>ah</q>, <q>eh</q>, <q>yani</q>, <q>şey</q> vb.)
+      kullandığının takibini yapar ve değerlendirme oturumunun sonunda tuttuğu raporu açıklar.</p>
+  </details>
+
+  <section class="panel">
+    <div class="panel-label">Konuşmacı ekle</div>
+    <form class="add-row" id="addForm">
+      <input type="text" id="newName" placeholder="Ad Soyad yaz, Enter ile ekle" autocomplete="off" list="knownNames">
+      <select id="newCategory" title="Konuşma türü"></select>
+      <button type="submit" class="primary">+ Ekle</button>
+    </form>
+    <div class="quick" id="quickPick" hidden>
+      <span class="quick-label">Doğaçlamaya seçilen kişi:</span>
+      <span id="quickChips" class="chips"></span>
+    </div>
+  </section>
+
+  <section class="now" id="nowPanel">
+    <div class="who">
+      <label for="currentSearch"><span class="live-dot"></span>Şu an konuşan</label>
+      <div class="combo" id="currentCombo"></div>
+    </div>
+    <button class="big" id="plusBtn">+1</button>
+    <div class="side">
+      <button id="undoBtn" title="Son sayımı geri al">↶ Geri al</button>
+    </div>
+    <div class="keys" id="keyHint"></div>
+  </section>
+
+  <main id="board"></main>
+</div>
+<div class="toast" id="status" role="status"></div>
+<datalist id="knownNames"></datalist>
+
+<dialog id="reportDialog">
+  <div id="reportView"></div>
+  <div class="row">
+    <button id="closeBtn" class="ghost">Kapat</button>
+    <button id="copyBtn">⧉ Metni kopyala</button>
+    <button id="pdfBtn" class="primary">⤓ PDF olarak kaydet</button>
+  </div>
+</dialog>
+
+<dialog id="importDialog">
+  <h2>Ajandadan / toplu ekle</h2>
+  <div class="help">
+    Ajanda dosyasını (.docx) seç ya da sayfanın herhangi bir yerine sürükleyip bırak.
+    Alternatif olarak ajanda metnini veya her satıra bir isim gelecek şekilde bir liste yapıştır.
+  </div>
+  <div class="file-drop">
+    <span style="font-size:22px">📎</span>
+    <input type="file" id="importFile" accept=".docx">
+  </div>
+  <textarea id="importText" placeholder="Ajanda metni ya da isim listesi (her satıra bir isim)"></textarea>
+  <div class="add-row" style="margin-top:10px;align-items:center">
+    <span class="quick-label">Düz isim listesi hangi bölüme eklensin:</span>
+    <select id="importCategory"></select>
+    <button id="parseBtn">Oku</button>
+  </div>
+  <div id="importPreview"></div>
+  <div class="row">
+    <button id="importClose" class="ghost">Kapat</button>
+    <button id="importConfirm" class="primary" disabled>Listeye ekle</button>
+  </div>
+</dialog>
+
+<div id="dropOverlay" class="drop-overlay" hidden>📎 Ajandayı buraya bırak</div>
+<div id="printArea"></div>
+
+<script>
+// Speech categories, in agenda order.
+const CATEGORIES = [
+  { id: "role", label: "Toplantı Görevlileri", color: "#5b6b8c" },
+  { id: "theme", label: "Tema Sunumu", color: "#7c5cc4" },
+  { id: "prepared", label: "Hazırlıklı Konuşmacılar", color: "#8a2a3b" },
+  { id: "guest", label: "Misafirler", color: "#0f8b8d" },
+  { id: "impromptu", label: "Doğaçlama Konuşmacılar", color: "#c27c0e" },
+  { id: "evaluator", label: "Değerlendiriciler", color: "#2f8f4e" },
+  { id: "other", label: "Diğer", color: "#7a7f88" },
+];
+const STORAGE_KEY = "ah-counter-v2";
+const HISTORY_LIMIT = 200;
+
+const todayIso = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+const freshState = () => ({ date: todayIso(), title: "", lastCategory: "prepared", speakers: [], currentId: null, history: [] });
+
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return s ? { ...freshState(), ...s } : null;
+  } catch { return null; }
+}
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+let state = load() || freshState();
+
+const $ = (id) => document.getElementById(id);
+const catLabel = (id) => (CATEGORIES.find(c => c.id === id) || CATEGORIES.at(-1)).label;
+const findSpeaker = (id) => state.speakers.find(s => s.id === id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const newId = () => "s" + Date.now() + Math.random().toString(36).slice(2, 6);
+
+function formatDate(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
+}
+
+let statusTimer = null;
+function setStatus(text) {
+  for (const el of [$("status"), pipWin && pipWin.document.getElementById("pipStatus")]) if (el) el.textContent = text;
+  clearTimeout(statusTimer);
+  if (text) statusTimer = setTimeout(() => setStatus(""), 4000);
+}
+
+// ---------- actions ----------
+function addSpeaker(name, category) {
+  const s = { id: newId(), name, category, count: 0 };
+  state.speakers.push(s);
+  state.lastCategory = category;
+  state.currentId = s.id;
+  save(); render();
+  return s;
+}
+
+function changeCount(id, delta) {
+  const s = findSpeaker(id);
+  if (!s || (delta < 0 && s.count === 0)) return;
+  s.count += delta;
+  state.history.push({ id, delta });
+  if (state.history.length > HISTORY_LIMIT) state.history.shift();
+  state.currentId = id;
+  save(); render();
+}
+
+function undo() {
+  while (state.history.length) {
+    const h = state.history.pop();
+    const s = findSpeaker(h.id);
+    if (!s) continue;
+    s.count = Math.max(0, s.count - h.delta);
+    state.currentId = s.id;
+    setStatus(`Geri alındı: ${s.name} (${h.delta > 0 ? "−1" : "+1"}) → ${s.count}`);
+    break;
+  }
+  save(); render();
+}
+
+function removeSpeaker(id) {
+  state.speakers = state.speakers.filter(s => s.id !== id);
+  state.history = state.history.filter(h => h.id !== id);
+  if (state.currentId === id) state.currentId = null;
+  save(); render();
+}
+
+function setCurrent(id) {
+  state.currentId = id || null;
+  save(); render();
+  const el = document.querySelector(`#board .card[data-id="${state.currentId}"]`);
+  if (el) {
+    // The header is sticky; keep the card from scrolling underneath it.
+    document.documentElement.style.scrollPaddingTop = $("nowPanel").offsetHeight + 16 + "px";
+    el.scrollIntoView({ block: "nearest" });
+  }
+}
+
+// ---------- rendering ----------
+function render() {
+  renderBoard();
+  renderNowBar();
+  renderQuickPick();
+  renderPip();
+}
+
+function renderBoard() {
+  const board = $("board");
+  board.innerHTML = "";
+  if (!state.speakers.length) {
+    board.innerHTML = `<div class="empty"><div class="big-ico">🎙️</div>
+      <b>Henüz konuşmacı yok</b><br>
+      Ajanda dosyasını sayfaya sürükleyip bırak ya da yukarıdan isim ekle.<br>
+      Konuşma başlarken kişiyi “Şu an konuşan”dan seç, her dolgu kelimesinde <b>+1</b>’e bas.</div>`;
+  }
+  for (const cat of CATEGORIES) {
+    const list = state.speakers.filter(s => s.category === cat.id);
+    if (!list.length) continue;
+    const section = document.createElement("section");
+    section.style.setProperty("--cat", cat.color);
+    const title = document.createElement("div");
+    title.className = "group-title";
+    title.innerHTML = `<span></span><span class="n"></span>`;
+    title.firstChild.textContent = cat.label;
+    title.lastChild.textContent = `· ${list.length} kişi · ${list.reduce((a, s) => a + s.count, 0)}`;
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    for (const s of list) grid.appendChild(cardFor(s));
+    section.append(title, grid);
+    board.appendChild(section);
+  }
+  const total = state.speakers.reduce((a, s) => a + s.count, 0);
+  $("total").innerHTML = `<b>${state.speakers.length}</b> kişi · toplam <b>${total}</b>`;
+}
+
+function cardFor(s) {
+  const card = document.createElement("div");
+  card.className = "card" + (s.id === state.currentId ? " current" : "");
+  card.dataset.id = s.id;
+  card.title = "Tıkla: +1";
+  card.innerHTML = `<div class="card-top"><div class="name"></div><span class="badge"><span class="live-dot"></span>Konuşuyor</span></div>
+    <div class="count${s.count ? "" : " zero"}">${s.count}</div>
+    <div class="actions">
+      <button data-act="select" title="Şu an konuşan olarak seç (saymadan)">▶ Seç</button>
+      <button data-act="minus" title="Bir azalt">−1</button>
+      <button data-act="remove" title="Konuşmacıyı kaldır">✕</button>
+    </div>`;
+  card.querySelector(".name").textContent = s.name;
+  card.addEventListener("click", (e) => {
+    const act = e.target.dataset && e.target.dataset.act;
+    if (act === "select") setCurrent(s.id);
+    else if (act === "minus") changeCount(s.id, -1);
+    else if (act === "remove") { if (s.count === 0 || armOnce(e.target, "Emin misin?")) removeSpeaker(s.id); }
+    else changeCount(s.id, +1);
+  });
+  return card;
+}
+
+// Searchable speaker picker: type part of a name to filter (accents optional: "omer" finds "Ömer"),
+// ↑/↓ to move, Enter to pick, Esc to cancel. Used on the main page and in the mini window.
+const fold = (t) => t.toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g, (c) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" }[c]));
+
+function makeCombo(container, inputId) {
+  const doc = container.ownerDocument;
+  container.innerHTML = `<input type="text" autocomplete="off" spellcheck="false"><ul class="combo-list" hidden></ul>`;
+  const input = container.querySelector("input");
+  const list = container.querySelector("ul");
+  if (inputId) input.id = inputId;
+  let matches = [];
+  let active = 0;
+
+  const currentName = () => (findSpeaker(state.currentId) || {}).name || "";
+  const close = () => { list.hidden = true; input.value = currentName(); };
+
+  function draw() {
+    const q = fold(input.value.trim());
+    matches = orderedSpeakers().filter(s => !q || fold(s.name).includes(q));
+    active = Math.min(active, Math.max(0, matches.length - 1));
+    list.innerHTML = "";
+    if (!matches.length) {
+      const li = doc.createElement("li");
+      li.className = "none";
+      li.textContent = state.speakers.length ? "Eşleşen kişi yok" : "Önce konuşmacı ekle";
+      list.appendChild(li);
+    }
+    matches.forEach((s, i) => {
+      const li = doc.createElement("li");
+      if (i === active) li.className = "active";
+      li.innerHTML = `<span></span><span class="meta"></span>`;
+      li.firstChild.textContent = s.name;
+      li.lastChild.textContent = `${catLabel(s.category).split(" ")[0]} · ${s.count}`;
+      li.addEventListener("mousedown", (e) => { e.preventDefault(); pick(s.id); });
+      list.appendChild(li);
+    });
+    list.hidden = false;
+    const el = list.children[active];
+    if (el) el.scrollIntoView({ block: "nearest" });
+  }
+
+  function pick(id) {
+    list.hidden = true;
+    input.blur(); // hand the keyboard back to the counting shortcuts
+    setCurrent(id);
+  }
+
+  input.addEventListener("focus", () => {
+    active = Math.max(0, orderedSpeakers().findIndex(s => s.id === state.currentId));
+    input.value = "";
+    draw();
+  });
+  input.addEventListener("input", () => { active = 0; draw(); });
+  input.addEventListener("blur", close);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") { active = Math.min(active + 1, matches.length - 1); draw(); e.preventDefault(); }
+    else if (e.key === "ArrowUp") { active = Math.max(active - 1, 0); draw(); e.preventDefault(); }
+    else if (e.key === "Enter") { e.preventDefault(); if (matches[active]) pick(matches[active].id); }
+    else if (e.key === "Escape") { e.preventDefault(); input.blur(); }
+  });
+
+  return {
+    input,
+    refresh() {
+      input.placeholder = state.speakers.length ? "İsim yaz veya seç…" : "Önce konuşmacı ekle";
+      if (doc.activeElement === input) draw(); else input.value = currentName();
+    },
+  };
+}
+
+function plusLabel() {
+  const cur = findSpeaker(state.currentId);
+  return cur ? `<span class="plus">+1</span><span class="cnt">${esc(cur.name)} · şu an <b>${cur.count}</b></span>`
+             : `<span class="plus">+1</span><span class="cnt">Önce konuşanı seç</span>`;
+}
+
+let mainCombo = null;
+function renderNowBar() {
+  mainCombo.refresh();
+  $("plusBtn").innerHTML = plusLabel();
+  $("plusBtn").disabled = !findSpeaker(state.currentId);
+  $("undoBtn").disabled = !state.history.length;
+}
+
+// Impromptu speakers are picked at random during the meeting, usually from people already in the list.
+function renderQuickPick() {
+  const names = [...new Set(state.speakers.map(s => s.name))];
+  $("knownNames").innerHTML = "";
+  for (const n of names) $("knownNames").appendChild(new Option(n));
+  const inImpromptu = new Set(state.speakers.filter(s => s.category === "impromptu").map(s => s.name));
+  const candidates = names.filter(n => !inImpromptu.has(n));
+  $("quickPick").hidden = catSelect.value !== "impromptu" || !candidates.length;
+  const chips = $("quickChips");
+  chips.innerHTML = "";
+  for (const n of candidates) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = "+ " + n;
+    b.addEventListener("click", () => addSpeaker(n, "impromptu"));
+    chips.appendChild(b);
+  }
+}
+
+// Two-click confirmation without browser dialogs: first click arms, second click within 3 s confirms.
+function armOnce(btn, armedText) {
+  if (btn.classList.contains("armed")) { btn.classList.remove("armed"); return true; }
+  const old = btn.textContent;
+  btn.classList.add("armed");
+  btn.textContent = armedText;
+  setTimeout(() => { btn.classList.remove("armed"); btn.textContent = old; }, 3000);
+  return false;
+}
+
+// ---------- keyboard shortcuts ----------
+// Work in the main page and in the mini window, whichever has focus. Ignored while typing in a field.
+const KEY_HINT = `<span><kbd>Boşluk</kbd> +1</span><span><kbd>−</kbd> −1</span><span><kbd>Z</kbd> geri al</span>
+  <span><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> kartlar arasında gez</span><span><kbd>F</kbd> isim ara</span>`;
+
+function orderedSpeakers() {
+  return CATEGORIES.flatMap(c => state.speakers.filter(s => s.category === c.id));
+}
+
+function moveCurrent(step) {
+  const list = orderedSpeakers();
+  if (!list.length) return;
+  const i = list.findIndex(s => s.id === state.currentId);
+  const next = i < 0 ? (step > 0 ? 0 : list.length - 1) : (i + step + list.length) % list.length;
+  setCurrent(list[next].id);
+}
+
+// Move to the card directly above/below the current one: the nearest row in that direction,
+// then the card in that row closest horizontally. Stays put at the top/bottom row.
+function moveVertical(dir) {
+  const cards = [...document.querySelectorAll("#board .card")].map(el => ({ id: el.dataset.id, r: el.getBoundingClientRect() }));
+  if (!cards.length) return;
+  const cur = cards.find(c => c.id === state.currentId);
+  if (!cur) { setCurrent(cards[dir > 0 ? 0 : cards.length - 1].id); return; }
+  const cx = cur.r.left + cur.r.width / 2;
+  const below = (c) => dir > 0 ? c.r.top > cur.r.top + cur.r.height / 2 : c.r.top < cur.r.top - cur.r.height / 2;
+  const candidates = cards.filter(below);
+  if (!candidates.length) return;
+  const rowTop = dir > 0 ? Math.min(...candidates.map(c => c.r.top)) : Math.max(...candidates.map(c => c.r.top));
+  const row = candidates.filter(c => Math.abs(c.r.top - rowTop) < 4);
+  row.sort((a, b) => Math.abs(a.r.left + a.r.width / 2 - cx) - Math.abs(b.r.left + b.r.width / 2 - cx));
+  setCurrent(row[0].id);
+}
+
+function handleKey(e) {
+  const t = e.target;
+  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (document.querySelector("dialog[open]")) return;
+  const k = e.key;
+  let handled = true;
+  if (k === " " || k === "+" || k === "=" || k === "Enter") changeCount(state.currentId, +1);
+  else if (k === "-" || k === "_") changeCount(state.currentId, -1);
+  else if (k === "z" || k === "Z" || k === "Backspace") undo();
+  else if (k === "/" || k === "f" || k === "F") (e.currentTarget === document ? mainCombo : pipCombo)?.input.focus();
+  else if (k === "ArrowRight") moveCurrent(+1);
+  else if (k === "ArrowLeft") moveCurrent(-1);
+  // On the main page the cards are a grid, so up/down move to the card above/below.
+  // The mini window has a plain list, where up/down mean previous/next.
+  else if (k === "ArrowDown") e.currentTarget === document ? moveVertical(+1) : moveCurrent(+1);
+  else if (k === "ArrowUp") e.currentTarget === document ? moveVertical(-1) : moveCurrent(-1);
+  else handled = false;
+  if (handled) e.preventDefault(); // stops Space/Enter from also "clicking" a focused button
+}
+document.addEventListener("keydown", handleKey);
+
+// ---------- header controls ----------
+const catSelect = $("newCategory");
+for (const sel of [catSelect, $("importCategory")]) for (const c of CATEGORIES) sel.add(new Option(c.label, c.id));
+
+function syncHeader() {
+  $("meetingDate").value = state.date || todayIso();
+  $("meetingTitle").value = state.title || "";
+  catSelect.value = state.lastCategory || "prepared";
+}
+$("meetingDate").addEventListener("change", (e) => { state.date = e.target.value; save(); });
+$("meetingTitle").addEventListener("input", (e) => { state.title = e.target.value; save(); });
+catSelect.addEventListener("change", () => { state.lastCategory = catSelect.value; save(); render(); });
+
+$("addForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = $("newName").value.trim();
+  if (!name) return;
+  $("newName").value = "";
+  addSpeaker(name, catSelect.value);
+});
+
+// Blur after picking so the keyboard shortcuts work right away instead of going to the dropdown.
+mainCombo = makeCombo($("currentCombo"), "currentSearch");
+$("plusBtn").addEventListener("click", () => changeCount(state.currentId, +1));
+$("undoBtn").addEventListener("click", undo);
+
+// Zero every count but keep the people, date and title. The undo history is cleared too,
+// since undoing a +1 after the reset would push a count below what the user just reset to.
+$("resetCountsBtn").addEventListener("click", (e) => {
+  if (!armOnce(e.target, "Bütün sayılar 0 olacak, tekrar tıkla")) return;
+  for (const s of state.speakers) s.count = 0;
+  state.history = [];
+  save(); render();
+  setStatus("Bütün sayılar sıfırlandı.");
+});
+
+$("resetBtn").addEventListener("click", (e) => {
+  if (!armOnce(e.target, "Her şey silinecek, tekrar tıkla")) return;
+  state = freshState();
+  save(); syncHeader(); render();
+});
+
+// ---------- floating mini window ----------
+// Chrome/Edge's Document Picture-in-Picture keeps a small window above every other window,
+// including the video meeting, so counting doesn't need a window switch.
+let pipWin = null;
+let pipCombo = null;
+
+$("pipBtn").addEventListener("click", async () => {
+  if (pipWin) { pipWin.focus(); return; }
+  if (!("documentPictureInPicture" in window)) {
+    setStatus("Mini pencere yalnızca Chrome ve Edge’de çalışır. Bu sayfayı Chrome’da aç.");
+    return;
+  }
+  try {
+    pipWin = await documentPictureInPicture.requestWindow({ width: 320, height: 300 });
+  } catch {
+    setStatus("Mini pencere açılamadı.");
+    return;
+  }
+  const doc = pipWin.document;
+  doc.title = "Ah-Eh";
+  doc.documentElement.lang = "tr";
+  doc.head.appendChild($("appStyle").cloneNode(true));
+  doc.body.innerHTML = `
+    <div class="pip">
+      <div class="combo" id="pipCombo"></div>
+      <button class="big" id="pipPlus">+1</button>
+      <div class="line">
+        <button id="pipUndo">↶ Geri al</button>
+      </div>
+      <form class="line" id="pipAdd">
+        <input id="pipName" placeholder="Yeni kişi + Enter" autocomplete="off">
+        <select id="pipCat" title="Bölüm"></select>
+      </form>
+      <div class="pip-status" id="pipStatus"></div>
+      <div class="keyhint">Boşluk/+ = +1 · Z = geri al · ↑↓ = kişi · F = ara</div>
+    </div>`;
+  doc.addEventListener("keydown", handleKey);
+  const pipCat = doc.getElementById("pipCat");
+  for (const c of CATEGORIES) {
+    const o = doc.createElement("option");
+    o.value = c.id;
+    o.textContent = c.label.split(" ")[0];
+    pipCat.appendChild(o);
+  }
+  pipCombo = makeCombo(doc.getElementById("pipCombo"));
+  doc.getElementById("pipPlus").addEventListener("click", () => changeCount(state.currentId, +1));
+  doc.getElementById("pipUndo").addEventListener("click", undo);
+  pipCat.addEventListener("change", () => { state.lastCategory = pipCat.value; save(); syncHeader(); render(); });
+  doc.getElementById("pipAdd").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = doc.getElementById("pipName");
+    const name = input.value.trim();
+    if (!name) return;
+    input.value = "";
+    input.blur(); // the new person is now the current speaker; shortcuts count for them right away
+    addSpeaker(name, pipCat.value);
+    syncHeader();
+  });
+  pipWin.addEventListener("pagehide", () => { pipWin = null; $("pipBtn").textContent = "⧉ Mini pencere"; });
+  $("pipBtn").textContent = "⧉ Mini pencere açık";
+  renderPip();
+});
+
+function renderPip() {
+  if (!pipWin) return;
+  const doc = pipWin.document;
+  pipCombo.refresh();
+  const plus = doc.getElementById("pipPlus");
+  plus.innerHTML = plusLabel();
+  plus.disabled = !findSpeaker(state.currentId);
+  doc.getElementById("pipUndo").disabled = !state.history.length;
+  doc.getElementById("pipCat").value = state.lastCategory || "prepared";
+}
+
+// ---------- report ----------
+// One flat list per person, fewest filler words first. A person who spoke in several sessions
+// (e.g. a role holder picked for impromptu) gets one row with their counts added up.
+function reportData() {
+  const byName = new Map();
+  for (const s of state.speakers) {
+    const p = byName.get(s.name) || { name: s.name, count: 0, sessions: [] };
+    p.count += s.count;
+    const label = catLabel(s.category);
+    if (!p.sessions.includes(label)) p.sessions.push(label);
+    byName.set(s.name, p);
+  }
+  const people = [...byName.values()].sort((a, b) => a.count - b.count || a.name.localeCompare(b.name, "tr"));
+  // Equal counts share the same rank (1, 1, 3 ...).
+  people.forEach((p, i) => { p.rank = i && people[i - 1].count === p.count ? people[i - 1].rank : i + 1; });
+  const total = people.reduce((a, p) => a + p.count, 0);
+  const clean = people.filter(p => p.count === 0).map(p => p.name);
+  const avg = people.length ? total / people.length : 0;
+  return { people, total, clean, avg, count: people.length };
+}
+
+const fmtAvg = (n) => n.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
+const subtitle = () => formatDate(state.date) + (state.title ? " · " + state.title : "");
+
+function renderReportHtml() {
+  const r = reportData();
+  let html = `<div class="rep-head"><h2>“Ah-Eh” Sayıcı Raporu</h2><div class="sub">${esc(subtitle())}</div></div>`;
+  if (!r.count) return html + `<p class="note">Henüz konuşmacı eklenmedi.</p>`;
+  html += `<div class="stats">
+    <div class="stat"><div class="v">${r.total}</div><div class="l">Toplam dolgu kelimesi</div></div>
+    <div class="stat"><div class="v">${r.count}</div><div class="l">Konuşmacı</div></div>
+    <div class="stat"><div class="v">${fmtAvg(r.avg)}</div><div class="l">Kişi başı ortalama</div></div>
+    <div class="stat"><div class="v">${r.clean.length}</div><div class="l">Hiç kullanmayan</div></div></div>
+    <table><tr><th class="n">Sıra</th><th>Konuşmacı</th><th>Konuştuğu bölüm</th><th class="n">Dolgu kelimesi</th></tr>`;
+  for (const p of r.people) {
+    html += `<tr${p.count === 0 ? ' class="clean"' : ""}><td class="n"><span class="rank">${p.rank}</span></td><td>${esc(p.name)}${p.count === 0 ? " 👏" : ""}</td>
+      <td class="muted">${esc(p.sessions.join(", "))}</td><td class="n"><b>${p.count}</b></td></tr>`;
+  }
+  html += `<tr class="sum"><td></td><td>Toplam</td><td></td><td class="n">${r.total}</td></tr></table>`;
+  if (r.clean.length) {
+    html += `<div class="clean-box"><div class="clean-title">👏 Hiç dolgu kelimesi kullanmayanlar <span>${r.clean.length} kişi</span></div>
+      <div class="clean-names">${r.clean.map(n => `<span>${esc(n)}</span>`).join("")}</div></div>`;
+  }
+  return html;
+}
+
+function reportText() {
+  const r = reportData();
+  const lines = ["“Ah-Eh” Sayıcı Raporu", subtitle(), ""];
+  if (!r.count) return lines.concat("Henüz konuşmacı eklenmedi.").join("\n");
+  for (const p of r.people) lines.push(`${p.rank}. ${p.name}: ${p.count}${p.count === 0 ? " 👏" : ""}`);
+  lines.push("");
+  lines.push(`Toplam dolgu kelimesi: ${r.total}`);
+  lines.push(`Konuşmacı sayısı: ${r.count}`);
+  lines.push(`Kişi başı ortalama: ${fmtAvg(r.avg)}`);
+  if (r.clean.length) lines.push(`Hiç dolgu kelimesi kullanmayanlar 👏: ${r.clean.join(", ")}`);
+  return lines.join("\n");
+}
+
+const reportDialog = $("reportDialog");
+$("reportBtn").addEventListener("click", () => { $("reportView").innerHTML = renderReportHtml(); reportDialog.showModal(); });
+$("closeBtn").addEventListener("click", () => reportDialog.close());
+$("copyBtn").addEventListener("click", async (e) => {
+  try { await navigator.clipboard.writeText(reportText()); e.target.textContent = "Kopyalandı ✓"; }
+  catch { e.target.textContent = "Kopyalanamadı"; }
+  setTimeout(() => { e.target.textContent = "⧉ Metni kopyala"; }, 2000);
+});
+
+// PDF: print only the report; the browser's print window offers "Save as PDF".
+// The document title becomes the suggested file name.
+$("pdfBtn").addEventListener("click", () => {
+  $("printArea").innerHTML = renderReportHtml();
+  reportDialog.close();
+  const oldTitle = document.title;
+  document.title = `Ah-Eh Raporu ${state.date || todayIso()}`;
+  window.addEventListener("afterprint", () => { document.title = oldTitle; }, { once: true });
+  window.print();
+});
+
+// ---- agenda-parser start ----
+// Reads the club's agenda (.docx or pasted text) and returns speakers by session.
+const TR_MONTHS = ["ocak", "şubat", "mart", "nisan", "mayıs", "haziran", "temmuz", "ağustos", "eylül", "ekim", "kasım", "aralık"];
+// Role holders who speak during the meeting. "SAYICI" covers both the vote counter and the Ah-Eh counter.
+const ROLE_WORDS = ["BAŞKAN", "TOPLANTI USTASI", "DOĞAÇLAMA USTASI", "KELİME USTASI", "SAYICI", "ZAMAN TUTUCU",
+                    "DİNLEYİCİ", "GENEL DEĞERLENDİRİCİ", "DİLBİLGİSİ", "GRAMER"];
+
+const upTr = (s) => s.toLocaleUpperCase("tr");
+const cleanName = (s) => s.replace(/^[\s•▪◦●❖\-–—*\d.)]+/, "").replace(/[\s.…:]+$/, "").replace(/\s+/g, " ").trim();
+const looksLikeName = (s) => s.length >= 3 && s.length <= 40 && s.split(" ").length <= 5 && !/\d/.test(s);
+
+function parseAgendaText(text) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const out = { title: "", date: "", entries: [] };
+  const seen = new Set();
+  const add = (name, category) => {
+    name = cleanName(name);
+    if (!looksLikeName(name)) return;
+    const key = upTr(name) + "|" + category;
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.entries.push({ name, category });
+  };
+  let section = "";
+  for (const line of lines) {
+    const U = upTr(line);
+    if (U.includes("ROL AÇIKLAMALARI")) break;
+    if (!out.title && /TOPLANTI\s*#\s*\d+/.test(U)) out.title = line.replace(/\s+/g, " ");
+    if (!out.date) {
+      const m = line.match(/(\d{1,2})\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)\s+(\d{4})/);
+      const mi = m ? TR_MONTHS.indexOf(m[2].toLocaleLowerCase("tr")) : -1;
+      if (mi >= 0) out.date = `${m[3]}-${String(mi + 1).padStart(2, "0")}-${m[1].padStart(2, "0")}`;
+    }
+    if (/HAZIRLIKLI KONUŞMACI/.test(U)) { section = "prepared"; continue; }
+    if (/DOĞAÇLAMA KONUŞMA/.test(U)) { section = "impromptu"; continue; }
+    if (/DEĞERLENDİRME OTURUMU/.test(U)) { section = "evaluation"; continue; }
+    if (/TEMA HAKKINDA/.test(U)) { section = "theme"; continue; }
+    if (/MİSAFİR/.test(U)) { section = ""; continue; }
+
+    // "Toplantı Ustası: ........ Betül Görünmez"
+    const roleMatch = line.match(/^([^:]{2,40}?)\s*:\s*[.…\s]*(.+)$/);
+    if (roleMatch && ROLE_WORDS.some(w => upTr(roleMatch[1]).includes(w))) { add(roleMatch[2], "role"); continue; }
+    // "Hamza Küçük- Patika: İlgi Çekici Mizah / ..."
+    if (section === "prepared" && U.includes("PATİKA")) { add(line.split(/\s*[-–—]\s*|\s+patika/i)[0], "prepared"); continue; }
+    // "Şeyda Kocaman (2-3.5 dakika) - 1. Değerlendirici"
+    if (/\d+\s*\.\s*DEĞERLENDİRİCİ/.test(U)) { add(line.split(/\s*\(|\s+[-–—]\s+/)[0], "evaluator"); continue; }
+  }
+  return out;
+}
+
+// Plain list fallback: one name per line.
+function parseNameList(text, category) {
+  return text.split(/\r?\n/).map(cleanName).filter(looksLikeName).map(name => ({ name, category }));
+}
+
+// Minimal .docx reader: a .docx is a zip; find word/document.xml and inflate it with the browser's
+// built-in DecompressionStream, then turn each <w:p> paragraph into one line of text.
+async function docxToText(buffer) {
+  const view = new DataView(buffer);
+  let eocd = -1;
+  for (let i = buffer.byteLength - 22; i >= Math.max(0, buffer.byteLength - 66000); i--) {
+    if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error("not a zip");
+  const entries = view.getUint16(eocd + 10, true);
+  let p = view.getUint32(eocd + 16, true);
+  const dec = new TextDecoder();
+  for (let n = 0; n < entries; n++) {
+    const method = view.getUint16(p + 10, true);
+    const compSize = view.getUint32(p + 20, true);
+    const nameLen = view.getUint16(p + 28, true), extraLen = view.getUint16(p + 30, true), commentLen = view.getUint16(p + 32, true);
+    const localOff = view.getUint32(p + 42, true);
+    const name = dec.decode(new Uint8Array(buffer, p + 46, nameLen));
+    if (name === "word/document.xml") {
+      const dataStart = localOff + 30 + view.getUint16(localOff + 26, true) + view.getUint16(localOff + 28, true);
+      const raw = new Uint8Array(buffer, dataStart, compSize);
+      let bytes = raw;
+      if (method === 8) {
+        const stream = new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+        bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+      }
+      return xmlToText(new TextDecoder("utf-8").decode(bytes));
+    }
+    p += 46 + nameLen + extraLen + commentLen;
+  }
+  throw new Error("word/document.xml not found");
+}
+
+function xmlToText(xml) {
+  const decode = (s) => s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+  return xml.split(/<\/w:p>/).map(chunk => {
+    chunk = chunk.replace(/<w:tab\/>/g, "<w:t>\t</w:t>");
+    let line = "";
+    for (const m of chunk.matchAll(/<w:t(?:\s[^>]*)?>([^<]*)<\/w:t>/g)) line += m[1];
+    return decode(line);
+  }).join("\n");
+}
+// ---- agenda-parser end ----
+
+// ---------- import dialog ----------
+const importDialog = $("importDialog");
+let importResult = null;
+
+$("importBtn").addEventListener("click", () => {
+  $("importCategory").value = state.lastCategory || "prepared";
+  importDialog.showModal();
+});
+$("importClose").addEventListener("click", () => importDialog.close());
+
+$("importFile").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (file) await importFile(file);
+});
+
+$("parseBtn").addEventListener("click", () => {
+  const text = $("importText").value;
+  if (!text.trim()) return;
+  let r = parseAgendaText(text);
+  if (!r.entries.length) r = { title: "", date: "", entries: parseNameList(text, $("importCategory").value) };
+  showPreview(r);
+});
+
+async function importFile(file) {
+  if (!importDialog.open) importDialog.showModal();
+  try {
+    const text = await docxToText(await file.arrayBuffer());
+    $("importText").value = text;
+    showPreview(parseAgendaText(text));
+  } catch {
+    $("importPreview").innerHTML = `<p class="note">Bu dosya okunamadı. Ajanda .docx olmalı. İstersen ajandanın metnini kopyalayıp kutuya yapıştır.</p>`;
+    $("importConfirm").disabled = true;
+  }
+}
+
+function showPreview(r) {
+  importResult = r;
+  const box = $("importPreview");
+  if (!r.entries.length) {
+    box.innerHTML = `<p class="note">İsim bulunamadı.</p>`;
+    $("importConfirm").disabled = true;
+    return;
+  }
+  const meta = [r.date && formatDate(r.date), r.title].filter(Boolean).join(" · ");
+  box.innerHTML = `<p class="note">${r.entries.length} kişi bulundu${meta ? " · " + esc(meta) : ""}. Gerekirse düzelt, istemediğini ✕ ile çıkar.</p>
+    <table class="preview"><tbody></tbody></table>`;
+  const tbody = box.querySelector("tbody");
+  for (const en of r.entries) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><input value="${esc(en.name)}"></td><td><select></select></td><td style="width:40px"><button>✕</button></td>`;
+    const sel = tr.querySelector("select");
+    for (const c of CATEGORIES) sel.add(new Option(c.label, c.id));
+    sel.value = en.category;
+    tr.querySelector("input").addEventListener("input", (e) => { en.name = e.target.value; });
+    sel.addEventListener("change", () => { en.category = sel.value; });
+    tr.querySelector("button").addEventListener("click", () => { en.removed = true; tr.remove(); });
+    tbody.appendChild(tr);
+  }
+  $("importConfirm").disabled = false;
+}
+
+$("importConfirm").addEventListener("click", () => {
+  if (!importResult) return;
+  const existing = new Set(state.speakers.map(s => upTr(s.name) + "|" + s.category));
+  let added = 0;
+  for (const en of importResult.entries) {
+    const name = en.name.trim();
+    const key = upTr(name) + "|" + en.category;
+    if (en.removed || !name || existing.has(key)) continue;
+    state.speakers.push({ id: newId(), name, category: en.category, count: 0 });
+    existing.add(key);
+    added++;
+  }
+  if (importResult.date) state.date = importResult.date;
+  if (importResult.title && !state.title) state.title = importResult.title;
+  save(); syncHeader(); render();
+  importDialog.close();
+  $("importText").value = ""; $("importFile").value = ""; $("importPreview").innerHTML = "";
+  $("importConfirm").disabled = true;
+  importResult = null;
+  setStatus(`${added} kişi eklendi.`);
+});
+
+// Drag & drop the agenda anywhere on the page.
+let dragDepth = 0;
+window.addEventListener("dragenter", (e) => {
+  if (e.dataTransfer && e.dataTransfer.types.includes("Files")) { dragDepth++; $("dropOverlay").hidden = false; }
+});
+window.addEventListener("dragleave", () => { if (--dragDepth <= 0) { dragDepth = 0; $("dropOverlay").hidden = true; } });
+window.addEventListener("dragover", (e) => e.preventDefault());
+window.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dragDepth = 0; $("dropOverlay").hidden = true;
+  const file = e.dataTransfer.files[0];
+  if (file) importFile(file);
+});
+
+$("keyHint").innerHTML = KEY_HINT;
+syncHeader();
+render();
+</script>
+</body>
+</html>
